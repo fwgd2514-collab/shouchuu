@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>中学学習トレーナー 説明書</title>
+    <style>
+      :root {
+        --ink: #18212f;
+        --muted: #667085;
+        --line: #d9e0ea;
+        --paper: #f4f7fb;
+        --green: #27745d;
+        --blue: #315e9f;
+        --amber: #bc7917;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          linear-gradient(rgba(49, 94, 159, 0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(40, 119, 131, 0.06) 1px, transparent 1px),
+          var(--paper);
+        background-size: 28px 28px;
+        color: var(--ink);
+        font-family: "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+        line-height: 1.72;
+      }
+
+      main {
+        width: min(1040px, 100%);
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      header {
+        padding: 20px 0 12px;
+      }
+
+      .eyebrow {
+        margin: 0 0 6px;
+        color: var(--green);
+        font-size: 0.82rem;
+        font-weight: 900;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 2.2rem;
+        line-height: 1.16;
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 1.15rem;
+      }
+
+      h3 {
+        margin: 18px 0 6px;
+        font-size: 1rem;
+      }
+
+      section {
+        margin-top: 16px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 18px;
+        background: rgba(255, 255, 255, 0.94);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px;
+        background: #fff;
+      }
+
+      .card strong,
+      .tag {
+        color: var(--blue);
+        font-weight: 900;
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tag {
+        border-radius: 8px;
+        padding: 4px 9px;
+        background: #edf3f8;
+        font-size: 0.82rem;
+      }
+
+      ol,
+      ul {
+        padding-left: 1.3rem;
+      }
+
+      li {
+        margin: 5px 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        padding: 10px;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: #eef3f7;
+        color: var(--blue);
+        font-size: 0.86rem;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .note {
+        border-left: 4px solid var(--amber);
+        padding: 10px 12px;
+        background: #fff8e8;
+        color: #5f430c;
+        font-weight: 800;
+      }
+
+      a {
+        color: var(--blue);
+        font-weight: 850;
+      }
+
+      @media (max-width: 720px) {
+        main {
+          padding: 14px;
+        }
+
+        h1 {
+          font-size: 1.7rem;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        table,
+        thead,
+        tbody,
+        tr,
+        th,
+        td {
+          display: block;
+        }
+
+        th {
+          border-bottom: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <p class="eyebrow">中学1〜3年 5教科</p>
+        <h1>中学学習トレーナー 説明書</h1>
+      </header>
+
+      <section>
+        <h2>この教材の考え方</h2>
+        <p>
+          このアプリは、学校に行けない日がある生徒でも、毎日短時間で「思い出す・答える・確認する」を繰り返せるようにした基礎反復教材です。
+          1回で全部を理解するよりも、5問単位で無理なく続けて、用語・計算・文法・読解の土台を少しずつ取り戻すことを目標にします。
+        </p>
+        <p class="note">
+          目安は1日1〜3セットです。調子が悪い日は5分だけ、調子がよい日は教科を変えてもう1セット、という使い方で十分です。
+        </p>
+        <div class="tag-row">
+          <span class="tag">毎日5〜100問</span>
+          <span class="tag">短時間</span>
+          <span class="tag">正解より継続</span>
+          <span class="tag">途中終了は破棄</span>
+          <span class="tag">講師が結果確認</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>毎日の使い方</h2>
+        <ol>
+          <li>講師画面で生徒名を選び、教科・学年・単元・難易度を選びます。</li>
+          <li>スマホで使う場合は「スマホは簡易問題」をオンにしておくと、短く読みやすい問題になります。</li>
+          <li>最初は問題だけを読みます。すぐにキーボードは出ません。</li>
+          <li>問題を確認すると、約0.5秒後に自動で回答入力へ進みます。「回答する」を押してすぐ入力することもできます。右側は計算や下書き用のメモ欄で、保存されません。</li>
+          <li>キーボードがある端末では、問題表示中にEnterキーを押すと回答へ進めます。</li>
+          <li>途中で終える時は「やめる」を押します。そのセットの結果は記録されません。</li>
+          <li>設定した問題数が終わると結果が表示され、選択画面に戻ります。</li>
+        </ol>
+        <p>
+          「やめる」は、その日の調子に合わせて学習量を減らすためのボタンです。途中までの結果は破棄されます。
+        </p>
+      </section>
+
+      <section>
+        <h2>数式の回答</h2>
+        <p>
+          数学の問題では、回答欄の下に数式パッドが出ます。x、y、2乗、3乗、分数記号をタッチして入力できます。
+          x² は「x²」「x^2」「x2」のどれで入力しても判定できます。
+          式の問題は、係数だけを別々に入れるのではなく、1つの欄に「5x+3」「y=5x+3」のように入力します。
+        </p>
+      </section>
+
+      <section>
+        <h2>最新版への更新</h2>
+        <p>
+          画面が古いまま残る場合は、講師画面の「最新版に更新」を押します。
+          学習記録は消さず、ブラウザの表示キャッシュだけを更新して読み込み直します。
+        </p>
+      </section>
+
+      <section>
+        <h2>効果音と画面操作</h2>
+        <p>
+          効果音設定は通常閉じています。変更したい時だけ講師画面の「効果音設定」を開き、出題時、回答時、答え合わせ時、正解時、誤答時、操作時、やめる時の音を選びます。
+          画面が切り替わる場面では、Enterキーで次の操作に進みやすいよう、主要ボタンにフォーカスが移ります。
+        </p>
+      </section>
+
+      <section>
+        <h2>予習用問題集</h2>
+        <p>
+          講師画面で「選択問題集を印刷」を押すと、印刷用の選択画面が開きます。
+          学年、教科、単元、難易度を選んで問題集を作成します。単元は「全単元」も選べます。
+          「単元あたり問題ページ」で、1つの単元に何枚分の問題を作るか1〜8枚の範囲で指定できます。
+          A4縦1ページに20問入る2段組で並べ、解答も問題と同じカード形式で印刷します。タブレットでは別タブを使わず、同じ画面に印刷プレビューを表示してから印刷します。
+        </p>
+      </section>
+
+      <section>
+        <h2>教材参考の方針</h2>
+        <p>
+          無料学習プリントサイトは、単元の細かい分け方や練習量の目安として参考にできます。
+          プリント本文や問題文はそのまま取り込まず、このアプリでは数字や語句を組み合わせて独自に問題を生成します。
+          外部教材を授業で配布する場合は、各サイトの利用規約を確認してください。
+        </p>
+      </section>
+
+      <section>
+        <h2>難易度の使い分け</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>難易度</th>
+              <th>目的</th>
+              <th>向いている日</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>基礎</td>
+              <td>用語・単語・計算手順を思い出す。</td>
+              <td>久しぶりに学ぶ日、疲れている日。</td>
+            </tr>
+            <tr>
+              <td>標準</td>
+              <td>文脈の中で答える。少し考えて選ぶ。</td>
+              <td>基礎で7割以上取れる日。</td>
+            </tr>
+            <tr>
+              <td>発展</td>
+              <td>説明、理由、少しひねった表現に慣れる。</td>
+              <td>標準に慣れてきた日。</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>中2発展問題の例</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>数学</h3>
+            <p>2点を通る一次関数の式、文章題から連立方程式を作る問題、2個のさいころの確率など。</p>
+          </div>
+          <div class="card">
+            <h3>英語</h3>
+            <p>過去形・未来表現・比較・There構文を、否定文や疑問文の中で判断する問題。</p>
+          </div>
+          <div class="card">
+            <h3>国語</h3>
+            <p>漢字の読みだけでなく、活用形、係り結び、根拠・批評などの語句を確認する問題。</p>
+          </div>
+          <div class="card">
+            <h3>理科</h3>
+            <p>質量保存、還元、飽和水蒸気量、オームの法則など、用語と計算・理由を結び付ける問題。</p>
+          </div>
+          <div class="card">
+            <h3>社会</h3>
+            <p>地域的特色、過密・過疎、御恩と奉公、太閤検地、流通など、原因や背景まで問う問題。</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>教科ごとの学習内容</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>国語</h3>
+            <p><strong>ねらい:</strong> 漢字、語句、文法、読解の基礎を毎日確認します。</p>
+            <ul>
+              <li>漢字: 読み、熟語、語彙</li>
+              <li>文法: 主語・述語、品詞、助詞・助動詞、活用</li>
+              <li>読解: 中心文、主題、根拠、表現技法</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>英語</h3>
+            <p><strong>ねらい:</strong> 英単語、文法、語順を反復して、英文の形に慣れます。</p>
+            <ul>
+              <li>英単語: 身近な名詞、学校生活、説明から単語を推理</li>
+              <li>文法: be動詞、一般動詞、過去、未来、比較、受け身、現在完了</li>
+              <li>語順: 主語・動詞・補足情報の並び</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>数学</h3>
+            <p><strong>ねらい:</strong> 計算手順、式、関数、図形、資料の読み取りを短問で固めます。</p>
+            <ul>
+              <li>中1: 正負の数、方程式、比例、図形、資料</li>
+              <li>中2: 式の計算、連立方程式、一次関数、図形、確率</li>
+              <li>中3: 展開・因数分解、二次方程式、関数、相似、標本調査</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>理科</h3>
+            <p><strong>ねらい:</strong> 重要用語を覚え、現象と理由を結び付けます。</p>
+            <ul>
+              <li>生命: 植物、細胞、遺伝</li>
+              <li>物質: 気体、化学変化、原子・分子</li>
+              <li>エネルギー: 光、音、力、電流、運動</li>
+              <li>地球: 天気、地震、天体</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>社会</h3>
+            <p><strong>ねらい:</strong> 地理・歴史・公民の用語を、意味とセットで覚えます。</p>
+            <ul>
+              <li>地理: 世界、日本、地域、産業、交通</li>
+              <li>歴史: 古代、中世、近世、近現代</li>
+              <li>公民: 憲法、政治、経済、社会のしくみ</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>講師・保護者向け</h2>
+        <ul>
+          <li>点数だけでなく、今日取り組めたことを評価します。</li>
+          <li>正答率が低い単元は、難易度を基礎に戻して短く続けます。</li>
+          <li>途中で「やめる」が多い日は、疲れや不安がある可能性もあるため、問題数や難易度を下げます。</li>
+          <li>同じ教科が続いて苦しくなる場合は、英語5分、社会5分のように教科を切り替えます。</li>
+        </ul>
+        <p>
+          参考: 教科構成と内容整理は、文部科学省の「中学校学習指導要領（平成29年告示）解説」の各教科編を参照して設計しています。
+          <a href="https://www.mext.go.jp/a_menu/shotou/new-cs/1387016.htm" target="_blank" rel="noreferrer">文部科学省 中学校学習指導要領解説</a>
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

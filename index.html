@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>学習トレーナー</title>
+  <link rel="stylesheet" href="./styles.css?v=20260623-expert-level" />
+  </head>
+  <body class="teacher-mode">
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="appEyebrow">小学生・中学生</p>
+          <h1 id="appTitle">学習トレーナー</h1>
+        </div>
+        <div class="score-strip" aria-label="学習状況">
+          <div>
+            <span id="activeStudentName">未登録</span>
+            <small>学習中</small>
+          </div>
+          <div>
+            <span id="streakCount">0</span>
+            <small>連続正解</small>
+          </div>
+          <div>
+            <span id="accuracyRate">--</span>
+            <small>正答率</small>
+          </div>
+          <div>
+            <span id="todayCount">0</span>
+            <small>今日の回答</small>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button class="secondary stage-switch" id="schoolStageButton" type="button">小/中切替</button>
+          <button class="secondary teacher-switch" id="teacherModeButton" type="button">講師画面</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="teacher-screen" id="teacherScreen" aria-label="講師画面">
+          <div class="teacher-grid">
+            <section class="teacher-panel student-section">
+              <h2>生徒</h2>
+              <form class="student-form" id="studentForm">
+                <label class="sr-only" for="studentNameInput">生徒名</label>
+                <input id="studentNameInput" type="text" maxlength="16" autocomplete="off" placeholder="生徒名を入力" />
+                <button class="secondary" id="addStudent" type="submit">追加</button>
+              </form>
+              <div class="student-count" id="studentCount">0 / 10</div>
+              <div class="student-list" id="studentList"></div>
+            </section>
+
+            <section class="teacher-panel setup-panel">
+              <h2>学習設定</h2>
+              <div class="setup-grid">
+                <div>
+                  <h3>教科</h3>
+                  <div class="segmented subject-tabs" id="subjectTabs" role="tablist" aria-label="教科"></div>
+                </div>
+                <div>
+                  <h3>学年</h3>
+                  <div class="segmented grade-tabs" id="gradeTabs" role="tablist" aria-label="学年"></div>
+                </div>
+                <div class="wide">
+                  <h3>単元</h3>
+                  <div class="unit-list compact-units" id="unitList"></div>
+                </div>
+                <div>
+                  <h3>難易度</h3>
+                  <div class="segmented" id="levelTabs" role="tablist" aria-label="難易度"></div>
+                </div>
+                <div class="session-options">
+                  <h3>出題</h3>
+                  <div class="setting-row">
+                    <label for="questionCount">問題数</label>
+                    <input id="questionCount" type="number" min="5" max="100" step="5" value="5" />
+                  </div>
+                  <label class="toggle-row">
+                    <input id="mistakeMode" type="checkbox" />
+                    <span>ミスした形式を優先</span>
+                  </label>
+                  <label class="toggle-row">
+                    <input id="mobileSimpleMode" type="checkbox" checked />
+                    <span>スマホは簡易問題</span>
+                  </label>
+                </div>
+                <details class="wide sound-settings" id="soundSettingsPanel">
+                  <summary>効果音設定</summary>
+                  <div class="sound-grid" id="soundSettings"></div>
+                </details>
+              </div>
+              <div class="start-row">
+                <div class="mini-stats">
+                  <span>累計 <strong id="totalAnswers">0</strong></span>
+                  <span>正解 <strong id="totalCorrect">0</strong></span>
+                </div>
+                <a class="secondary guide-link" href="./learning-guide.html" target="_blank" rel="noreferrer">説明書</a>
+                <button class="secondary" id="printWorkbook" type="button">選択問題集を印刷</button>
+                <button class="secondary" id="refreshCache" type="button">最新版に更新</button>
+                <button class="secondary" id="resetStats" type="button">記録をリセット</button>
+                <button class="primary" id="startSession" type="button">学習開始</button>
+              </div>
+            </section>
+
+            <section class="results-strip teacher-results" aria-label="学習結果">
+              <div class="review-head">
+                <h2>学習結果</h2>
+                <span id="resultsSummary" class="results-summary">生徒を登録してください</span>
+              </div>
+              <div class="results-layout">
+                <div class="results-table-wrap">
+                  <table class="results-table">
+                    <thead>
+                      <tr>
+                        <th>生徒</th>
+                        <th>回答</th>
+                        <th>正答率</th>
+                        <th>連続</th>
+                        <th>最終学習</th>
+                      </tr>
+                    </thead>
+                    <tbody id="resultsTableBody"></tbody>
+                  </table>
+                </div>
+                <div class="insight-column">
+                  <div class="subject-insight" id="subjectInsight"></div>
+                  <div class="learning-advice" id="learningAdvice"></div>
+                  <div class="unit-breakdown" id="unitBreakdown"></div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="learning-surface student-screen" id="studentScreen" aria-label="生徒用画面">
+          <div class="session-bar">
+            <div>
+              <p class="unit-kicker" id="unitKicker">数と式</p>
+              <h2 id="questionTitle">問題</h2>
+            </div>
+            <div class="progress-cluster" aria-label="進捗">
+              <span id="progressText">1 / 10</span>
+              <div class="progress-track">
+                <span id="progressFill"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="problem-layout">
+            <article class="problem-card">
+              <div class="problem-meta">
+                <span id="skillTag">正負の数</span>
+                <span id="levelTag">基礎</span>
+              </div>
+              <p id="problemText" class="problem-text"></p>
+              <div class="inline-memo-box memo-box" aria-label="タブレット用計算メモ">
+                <div class="memo-head">
+                  <h3>計算メモ</h3>
+                  <button class="secondary small-button" id="clearInlineMemo" type="button">消す</button>
+                </div>
+                <textarea id="inlineScratchPad" spellcheck="false" autocomplete="off" placeholder="途中式やメモをここに入力できます。保存はされません。"></textarea>
+              </div>
+              <div id="answerArea" class="answer-area"></div>
+              <div class="action-row">
+                <button class="primary" id="beginAnswer" type="button">回答する</button>
+                <button class="primary" id="checkAnswer" type="button">答え合わせ</button>
+                <button class="secondary" id="saveQuestion" type="button">やめる</button>
+                <button class="secondary" id="nextQuestion" type="button">次の問題</button>
+              </div>
+              <div id="feedback" class="feedback" aria-live="polite"></div>
+            </article>
+
+            <aside class="work-panel" aria-label="計算メモ">
+              <canvas id="visualCanvas" width="640" height="440"></canvas>
+              <div class="memo-box">
+                <div class="memo-head">
+                  <h3>計算メモ</h3>
+                  <button class="secondary small-button" id="clearMemo" type="button">消す</button>
+                </div>
+                <textarea id="scratchPad" spellcheck="false" autocomplete="off" placeholder="途中式やメモをここに入力できます。保存はされません。"></textarea>
+              </div>
+            </aside>
+          </div>
+
+          <section class="review-strip" aria-label="直近の結果">
+            <div class="review-head">
+              <h2>直近の結果</h2>
+              <button class="icon-button" id="restartSession" type="button" aria-label="はじめから">
+                <span aria-hidden="true">↻</span>
+              </button>
+            </div>
+            <div id="historyList" class="history-list"></div>
+          </section>
+
+          <section class="session-result" id="sessionResult" aria-label="結果">
+            <div class="result-panel">
+              <p class="unit-kicker" id="resultKicker">結果</p>
+              <h2 id="resultTitle">学習結果</h2>
+              <div class="result-score">
+                <div><span id="resultCorrect">0</span><small>正解</small></div>
+                <div><span id="resultTotal">0</span><small>回答</small></div>
+                <div><span id="resultAccuracy">--</span><small>正答率</small></div>
+              </div>
+              <button class="primary" id="returnSelection" type="button">選択画面へ</button>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <div class="print-dialog-backdrop" id="printDialog" hidden>
+      <section class="print-dialog" role="dialog" aria-modal="true" aria-labelledby="printDialogTitle">
+        <div class="print-dialog-head">
+          <div>
+            <p class="unit-kicker">予習用問題集</p>
+            <h2 id="printDialogTitle">印刷する範囲を選択</h2>
+          </div>
+          <button class="icon-button" id="closePrintDialog" type="button" aria-label="閉じる">×</button>
+        </div>
+        <div class="print-form">
+          <label>
+            <span>教科</span>
+            <select id="printSubject"></select>
+          </label>
+          <label>
+            <span>学年</span>
+            <select id="printGrade"></select>
+          </label>
+          <label>
+            <span>単元</span>
+            <select id="printUnit"></select>
+          </label>
+          <label>
+            <span>難易度</span>
+            <select id="printLevel"></select>
+          </label>
+          <label>
+            <span>単元あたり問題ページ</span>
+            <input id="printPages" type="number" min="1" max="8" step="1" value="1" />
+          </label>
+          <p class="print-estimate" id="printEstimate">問題ページ数を選択してください。</p>
+        </div>
+        <div class="print-dialog-actions">
+          <button class="secondary" id="cancelPrintWorkbook" type="button">キャンセル</button>
+          <button class="primary" id="createPrintWorkbook" type="button">問題集を作成</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="school-choice-backdrop" id="schoolChoice" role="dialog" aria-modal="true" aria-labelledby="schoolChoiceTitle" hidden>
+      <section class="school-choice">
+        <p class="unit-kicker">学習コース</p>
+        <h2 id="schoolChoiceTitle">どちらで学習しますか</h2>
+        <div class="school-choice-grid">
+          <button class="school-choice-card" type="button" data-school-stage="elementary">
+            <span>小</span>
+            <strong>小学生</strong>
+            <small>小1〜小6 / 算数・国語・理科・社会・英語</small>
+          </button>
+          <button class="school-choice-card" type="button" data-school-stage="junior">
+            <span>中</span>
+            <strong>中学生</strong>
+            <small>中1〜中3 / 5教科</small>
+          </button>
+        </div>
+      </section>
+    </div>
+
+  <script src="./app.js?v=20260623-expert-level"></script>
+  </body>
+</html>
