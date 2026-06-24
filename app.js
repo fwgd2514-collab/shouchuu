@@ -45,7 +45,7 @@ const levels = [
   { id: "basic", name: "基礎" },
   { id: "standard", name: "標準" },
   { id: "advanced", name: "発展" },
-  { id: "expert", name: "エキスパート" },
+  { id: "expert", name: "お受験" },
 ];
 
 const subjects = [
@@ -724,12 +724,27 @@ const SOUND_LIBRARY = Object.freeze([
 ]);
 const SOUND_EVENTS = Object.freeze([
   { id: "question", label: "出題時" },
-  { id: "answer", label: "回答時" },
-  { id: "check", label: "答え合わせ時" },
+  { id: "answer", label: "回答入力開始" },
+  { id: "check", label: "答え合わせ" },
   { id: "correct", label: "正解時" },
   { id: "wrong", label: "誤答時" },
-  { id: "operation", label: "操作時" },
-  { id: "hold", label: "やめる時" },
+  { id: "result", label: "結果表示" },
+  { id: "next", label: "次の問題へ進む" },
+  { id: "return", label: "選択画面へ戻る" },
+  { id: "start", label: "学習開始" },
+  { id: "quit", label: "途中でやめる" },
+  { id: "restart", label: "同じ条件でもう一度" },
+  { id: "stage", label: "小学生/中学生切替" },
+  { id: "teacher", label: "講師画面へ切替" },
+  { id: "student", label: "生徒登録・選択" },
+  { id: "subject", label: "教科選択" },
+  { id: "grade", label: "学年選択" },
+  { id: "unit", label: "単元選択" },
+  { id: "level", label: "難易度選択" },
+  { id: "print", label: "印刷画面・問題集作成" },
+  { id: "settings", label: "設定変更" },
+  { id: "memo", label: "メモ消去" },
+  { id: "operation", label: "その他の操作" },
 ]);
 const DEFAULT_SOUND_SETTINGS = Object.freeze({
   question: "data-display-1",
@@ -737,8 +752,23 @@ const DEFAULT_SOUND_SETTINGS = Object.freeze({
   check: "beep-1",
   correct: "success",
   wrong: "voice-makemashita",
-  operation: "button-37",
-  hold: "voice-junbi",
+  result: "tone-finish",
+  next: "none",
+  return: "none",
+  start: "none",
+  quit: "voice-junbi",
+  restart: "none",
+  stage: "none",
+  teacher: "none",
+  student: "none",
+  subject: "none",
+  grade: "none",
+  unit: "none",
+  level: "none",
+  print: "none",
+  settings: "none",
+  memo: "none",
+  operation: "none",
 });
 const SOUND_VOLUME = Object.freeze({
   question: 0.75,
@@ -746,8 +776,23 @@ const SOUND_VOLUME = Object.freeze({
   check: 0.7,
   correct: 0.82,
   wrong: 0.78,
-  operation: 0.55,
-  hold: 0.78,
+  result: 0.78,
+  next: 0.55,
+  return: 0.58,
+  start: 0.58,
+  quit: 0.78,
+  restart: 0.58,
+  stage: 0.55,
+  teacher: 0.55,
+  student: 0.55,
+  subject: 0.55,
+  grade: 0.55,
+  unit: 0.55,
+  level: 0.55,
+  print: 0.55,
+  settings: 0.45,
+  memo: 0.45,
+  operation: 0.45,
 });
 const ROSTER_KEY = "jhs1-math-trainer-students";
 const LEGACY_STATS_KEY = "jhs1-math-trainer";
@@ -947,7 +992,7 @@ function getCurriculum(stageId = state.schoolStage) {
 }
 
 function isExpertLevelAvailable(stageId = state.schoolStage, gradeId = state.grade) {
-  return (stageId === "elementary" && String(gradeId) === "6") || (stageId === "junior" && String(gradeId) === "3");
+  return ["elementary", "junior"].includes(stageId) && Boolean(gradeId);
 }
 
 function getAvailableLevels(stageId = state.schoolStage, gradeId = state.grade) {
@@ -1311,11 +1356,28 @@ function bindEvents() {
 }
 
 function handleOperationSound(event) {
-  const target = event.target.closest("button, select, input[type='checkbox']");
+  const target = event.target.closest("button, select, input[type='checkbox'], input[type='number']");
   if (!target || target.disabled) return;
-  if (target.matches("#beginAnswer, #checkAnswer, #saveQuestion")) return;
+  const soundType = getOperationSoundType(target);
+  if (!soundType) return;
   unlockAudio();
-  playSound("operation");
+  playSound(soundType);
+}
+
+function getOperationSoundType(target) {
+  if (target.matches("#beginAnswer, #checkAnswer, #saveQuestion, #nextQuestion, #returnSelection, #restartSession, #startSession, #teacherModeButton")) return null;
+  if (target.closest("#soundSettings")) return "settings";
+  if (target.matches("#schoolStageButton") || target.closest("#schoolChoice") || target.matches("[data-school-stage]")) return "stage";
+  if (target.matches("[data-subject]")) return "subject";
+  if (target.matches("[data-grade]")) return "grade";
+  if (target.matches("[data-unit]")) return "unit";
+  if (target.matches("[data-level]")) return "level";
+  if (target.matches("[data-student], [data-result-student], [data-remove-student]") || target.closest("#studentForm")) return "student";
+  if (target.matches("#printWorkbook, #closePrintDialog, #cancelPrintWorkbook, #createPrintWorkbook, #runPrintPreview, #closePrintPreview")) return "print";
+  if (target.closest("#printDialog") || target.matches("#printSubject, #printGrade, #printUnit, #printLevel, #printPages")) return "print";
+  if (target.matches("#mobileSimpleMode, #questionCount, #refreshCache, #mistakeMode")) return "settings";
+  if (target.matches("#clearMemo, #clearInlineMemo")) return "memo";
+  return "operation";
 }
 
 function handleStudentEnterShortcut(event) {
@@ -1921,6 +1983,7 @@ function startStudentSession() {
   }
 
   unlockAudio();
+  playSound("start");
   resetSession();
   state.questionNumber = 1;
   setMode("student");
@@ -1938,6 +2001,7 @@ function requestTeacherMode() {
     return;
   }
   setMode("teacher");
+  playSound("teacher");
   renderStudentPanel();
   renderControls();
   renderStats();
@@ -2045,7 +2109,7 @@ function createProblemForUnit(unit, levelId, weights = [], context = {}) {
   const stageId = context.schoolStageId || state.schoolStage;
   const gradeId = context.gradeId || state.grade;
   const subjectId = context.subjectId || state.subject;
-  if (levelId === "expert" && isExpertLevelAvailable(stageId, gradeId)) {
+  if (levelId === "expert") {
     const expert = generateExpertProblem({ stageId, gradeId, subjectId, unit, weights });
     if (expert) return expert;
   }
@@ -2053,15 +2117,39 @@ function createProblemForUnit(unit, levelId, weights = [], context = {}) {
 }
 
 function generateExpertProblem({ stageId, gradeId, subjectId, unit, weights }) {
-  if (stageId === "elementary" && String(gradeId) === "6") {
-    if (subjectId === "math") return generateElementaryEntranceMathProblem(unit.id);
-    return generateElementaryKnowledgeProblem(subjectId, unit.id, "advanced", weights);
+  if (stageId === "elementary") {
+    if (subjectId === "math") return generateElementaryEntranceMathProblem(unit.id, Number(gradeId));
+    return generateElementaryEntranceKnowledgeProblem(subjectId, unit.id, weights);
   }
-  if (stageId === "junior" && String(gradeId) === "3") {
-    if (subjectId === "math") return generateHighSchoolEntranceMathProblem(unit.id);
-    return unit.generator("advanced", weights);
+  if (stageId === "junior") {
+    if (subjectId === "math") return generateHighSchoolEntranceMathProblem(unit.id, Number(gradeId));
+    return generateJuniorEntranceKnowledgeProblem(subjectId, unit, weights);
   }
   return null;
+}
+
+function generateElementaryEntranceKnowledgeProblem(subjectId, unitId, weights) {
+  const problem = generateElementaryKnowledgeProblem(subjectId, unitId, "advanced", weights);
+  return {
+    ...problem,
+    kind: `elementary-expert:${problem.kind}`,
+    title: `中学受験 お受験 ${getSubjectName(subjectId)}`,
+    skill: `入試準備・${problem.skill}`,
+    text: `中学受験で問われやすい知識です。<br>${problem.text}`,
+    visual: { ...problem.visual, heading: "中学受験 お受験" },
+  };
+}
+
+function generateJuniorEntranceKnowledgeProblem(subjectId, unit, weights) {
+  const problem = unit.generator("advanced", weights);
+  return {
+    ...problem,
+    kind: `junior-expert:${problem.kind}`,
+    title: `高校入試 お受験 ${getSubjectName(subjectId)}`,
+    skill: `入試準備・${problem.skill}`,
+    text: `高校入試で差がつきやすい確認問題です。<br>${problem.text}`,
+    visual: { ...problem.visual, heading: "高校入試 お受験" },
+  };
 }
 
 function getRecentBucketKey() {
@@ -2331,7 +2419,7 @@ function checkCurrentAnswer() {
 function quitCurrentSession() {
   if (state.mode !== "student") return;
   unlockAudio();
-  playSound("hold");
+  playSound("quit");
   clearSessionTimers();
   restoreSessionSnapshot();
   state.session = defaultSession();
@@ -2450,6 +2538,7 @@ function advanceAfterAnswer() {
     showSessionResult();
     return;
   }
+  playSound("next");
   newQuestion(false);
 }
 
@@ -2476,12 +2565,14 @@ function showSessionResult() {
   els.resultTotal.textContent = String(total);
   els.resultAccuracy.textContent = total ? `${accuracy}%` : "--";
   els.studentScreen.classList.add("show-result");
+  playSound("result");
   window.setTimeout(focusReturnSelectionButton, 30);
   state.resultReturnTimer = window.setTimeout(returnToTeacherSelection, RESULT_RETURN_MS);
 }
 
 function returnToTeacherSelection() {
   clearSessionTimers();
+  playSound("return");
   els.studentScreen.classList.remove("show-result");
   state.questionNumber = 1;
   setMode("teacher");
@@ -2637,7 +2728,25 @@ function playToneSound(type) {
       { frequency: 1040, duration: 0.14, delay: 0.16, volume: 0.052 },
     ],
   };
-  const tones = patterns[type];
+  const aliases = {
+    result: "tone-finish",
+    next: "operation",
+    return: "tone-ready",
+    start: "tone-ready",
+    quit: "hold",
+    restart: "tone-ready",
+    stage: "tone-rise",
+    teacher: "tone-chime",
+    student: "tone-pop",
+    subject: "operation",
+    grade: "operation",
+    unit: "operation",
+    level: "tone-rise",
+    print: "tone-chime",
+    settings: "operation",
+    memo: "operation",
+  };
+  const tones = patterns[type] || patterns[aliases[type]];
   if (!tones) return;
 
   const start = context.currentTime + 0.01;
@@ -3047,6 +3156,8 @@ function getQuestionLimit() {
 }
 
 function restartSession() {
+  unlockAudio();
+  playSound("restart");
   resetSession();
   state.questionNumber = 1;
   state.history = [];
@@ -3322,14 +3433,18 @@ function generateElementaryMathProblem(unitId, grade, level) {
   return generateElementaryAddSubProblem(Number(grade), level);
 }
 
-function generateElementaryEntranceMathProblem(unitId) {
-  const pool = unitId.includes("ratio")
-    ? ["tsurukame", "ratio-difference", "speed"]
+function generateElementaryEntranceMathProblem(unitId, grade = 6) {
+  const gradeNumber = Number(grade) || 6;
+  const lowerPool = ["pattern", "age", "geometry-area", "cases"];
+  const middlePool = ["tsurukame", "pattern", "age", "work", "geometry-area", "fraction-trick"];
+  const upperPool = unitId.includes("ratio")
+    ? ["tsurukame", "ratio-difference", "speed", "work", "water-tank"]
     : unitId.includes("volume") || unitId.includes("area")
-      ? ["geometry-area", "cases", "ratio-difference"]
+      ? ["geometry-area", "water-tank", "cases", "ratio-difference"]
       : unitId.includes("fractions")
-        ? ["ratio-difference", "speed", "fraction-trick"]
-        : ["tsurukame", "speed", "cases", "geometry-area"];
+        ? ["ratio-difference", "speed", "fraction-trick", "work"]
+        : ["tsurukame", "speed", "cases", "geometry-area", "pattern", "work", "water-tank", "age"];
+  const pool = gradeNumber <= 2 ? lowerPool : gradeNumber <= 4 ? middlePool : upperPool;
   const pattern = pick(pool);
 
   if (pattern === "tsurukame") return generateEntranceTsurukameProblem();
@@ -3337,6 +3452,10 @@ function generateElementaryEntranceMathProblem(unitId) {
   if (pattern === "cases") return generateEntranceCasesProblem();
   if (pattern === "geometry-area") return generateEntranceGeometryAreaProblem();
   if (pattern === "fraction-trick") return generateEntranceFractionTrickProblem();
+  if (pattern === "pattern") return generateEntrancePatternProblem(gradeNumber);
+  if (pattern === "work") return generateEntranceWorkProblem();
+  if (pattern === "water-tank") return generateEntranceWaterTankProblem();
+  if (pattern === "age") return generateEntranceAgeProblem();
   return generateEntranceRatioDifferenceProblem();
 }
 
@@ -3347,7 +3466,7 @@ function generateEntranceTsurukameProblem() {
   const legs = turtles * 4 + cranes * 2;
   return {
     kind: "elementary-expert:tsurukame",
-    title: "中学受験 エキスパート",
+    title: "中学受験 お受験",
     skill: "つるかめ算",
     text: `つるとかめが合わせて <span class="math">${total}</span> 匹います。足の数は全部で <span class="math">${legs}</span> 本です。かめは何匹ですか。`,
     hint: "全部をつると考えたとき、足が2本ずつ増える分に注目します。",
@@ -3368,7 +3487,7 @@ function generateEntranceRatioDifferenceProblem() {
   const total = (a + b) * unit;
   return {
     kind: "elementary-expert:ratio-difference",
-    title: "中学受験 エキスパート",
+    title: "中学受験 お受験",
     skill: "割合と比",
     text: `AとBの人数の比は <span class="math">${a}:${b}</span> で、BはAより <span class="math">${difference}</span> 人多いです。AとBを合わせると何人ですか。`,
     hint: "比の差が実際の差にあたります。1つ分を先に求めます。",
@@ -3388,7 +3507,7 @@ function generateEntranceSpeedProblem() {
   const distance = (speedA + speedB) * time;
   return {
     kind: "elementary-expert:speed-meet",
-    title: "中学受験 エキスパート",
+    title: "中学受験 お受験",
     skill: "速さ",
     text: `池のまわりの道を、Aさんは分速 <span class="math">${speedA}m</span>、Bさんは分速 <span class="math">${speedB}m</span> で反対向きに歩きます。2人が同時に同じ場所を出発し、道の長さが <span class="math">${distance}m</span> のとき、何分後に出会いますか。`,
     hint: "反対向きに進むので、2人の速さを足して考えます。",
@@ -3407,7 +3526,7 @@ function generateEntranceCasesProblem() {
   const answer = evenCount * (digits.length - 1) * (digits.length - 2);
   return {
     kind: "elementary-expert:cases",
-    title: "中学受験 エキスパート",
+    title: "中学受験 お受験",
     skill: "場合の数",
     text: `数字 <span class="math">${digits.join("、")}</span> から異なる3つを選んで3けたの整数を作ります。偶数は全部で何個できますか。`,
     hint: "偶数なので一の位を先に決めます。そのあと百の位、十の位を順に考えます。",
@@ -3428,7 +3547,7 @@ function generateEntranceGeometryAreaProblem() {
   const answer = width * height - cutWidth * cutHeight;
   return {
     kind: "elementary-expert:geometry-area",
-    title: "中学受験 エキスパート",
+    title: "中学受験 お受験",
     skill: "図形の面積",
     text: `たて <span class="math">${height}cm</span>、横 <span class="math">${width}cm</span> の長方形から、たて <span class="math">${cutHeight}cm</span>、横 <span class="math">${cutWidth}cm</span> の長方形を1つ切り取りました。残りの面積を求めなさい。`,
     hint: "全体の面積から、切り取った長方形の面積を引きます。",
@@ -3450,7 +3569,7 @@ function generateEntranceFractionTrickProblem() {
   const remaining = total - used;
   return {
     kind: "elementary-expert:fraction-trick",
-    title: "中学受験 エキスパート",
+    title: "中学受験 お受験",
     skill: "分数と割合",
     text: `全体の <span class="math">${formatFraction(makeFraction(numerator, denominator), { html: true })}</span> にあたる量が <span class="math">${used}</span> です。残りの量はいくつですか。`,
     hint: "まず全体を求めてから、使った量を引きます。",
@@ -3460,6 +3579,89 @@ function generateEntranceFractionTrickProblem() {
     visual: { type: "english", heading: "分数の逆算", lines: ["全体", "使った量", "残り"] },
     check: (input) => numericEquals(input.value, remaining),
     explain: `全体は ${used}÷${numerator}×${denominator}=${total}、残りは ${total}-${used}=${remaining} です。`,
+  };
+}
+
+function generateEntrancePatternProblem(grade = 6) {
+  const start = randInt(2, 9);
+  const diff = grade <= 2 ? randInt(2, 4) : randInt(3, 8);
+  const index = grade <= 2 ? randInt(7, 12) : randInt(16, 36);
+  const answer = start + diff * (index - 1);
+  return {
+    kind: "elementary-expert:pattern-sequence",
+    title: "中学受験 お受験",
+    skill: "規則性",
+    text: `数が <span class="math">${start}, ${start + diff}, ${start + diff * 2}, ${start + diff * 3}, ...</span> と同じきまりで続きます。<span class="math">${index}</span> 番目の数を求めなさい。`,
+    hint: "となり合う数の差が何ずつ増えるかを見つけ、1番目から何回増えるかを考えます。",
+    answerType: "single",
+    answerLabel: "数",
+    displayAnswer: String(answer),
+    visual: { type: "english", heading: "規則性", lines: [`はじめ ${start}`, `差 ${diff}`, `${index}番目`] },
+    check: (input) => numericEquals(stripUnit(input.value), answer),
+    explain: `1番目から${index}番目までは ${index - 1} 回増えるので、${start}+${diff}×${index - 1}=${answer} です。`,
+  };
+}
+
+function generateEntranceWorkProblem() {
+  const pairs = [
+    [6, 12, 4],
+    [10, 15, 6],
+    [12, 24, 8],
+    [9, 18, 6],
+    [8, 24, 6],
+  ];
+  const [daysA, daysB, answer] = pick(pairs);
+  return {
+    kind: "elementary-expert:work",
+    title: "中学受験 お受験",
+    skill: "仕事算",
+    text: `Aさんだけなら <span class="math">${daysA}</span> 日、Bさんだけなら <span class="math">${daysB}</span> 日かかる仕事があります。2人で同時に行うと何日で終わりますか。`,
+    hint: "1日に進む仕事の量を分数で考えます。",
+    answerType: "single",
+    answerLabel: "日数",
+    displayAnswer: `${answer}日`,
+    visual: { type: "english", heading: "仕事算", lines: [`A 1/${daysA}`, `B 1/${daysB}`, "合計"] },
+    check: (input) => numericEquals(stripUnit(input.value).replace(/日/g, ""), answer),
+    explain: `1日に進む量は 1/${daysA}+1/${daysB}=1/${answer} なので、${answer}日で終わります。`,
+  };
+}
+
+function generateEntranceWaterTankProblem() {
+  const fill = pick([18, 24, 30, 36]);
+  const drain = pick([4, 6, 8, 10].filter((value) => value < fill));
+  const time = randInt(8, 18);
+  const water = (fill - drain) * time;
+  return {
+    kind: "elementary-expert:water-tank",
+    title: "中学受験 お受験",
+    skill: "水そうとグラフ",
+    text: `水そうに水を毎分 <span class="math">${fill}L</span> 入れながら、同時に毎分 <span class="math">${drain}L</span> ずつ水を抜きます。水そうの水が <span class="math">${water}L</span> 増えるのは何分後ですか。`,
+    hint: "1分あたりに実際に増える水の量を先に求めます。",
+    answerType: "single",
+    answerLabel: "時間",
+    displayAnswer: `${time}分`,
+    visual: { type: "english", heading: "水そう", lines: [`入る ${fill}L/分`, `出る ${drain}L/分`, `${water}L`] },
+    check: (input) => numericEquals(stripUnit(input.value).replace(/分/g, ""), time),
+    explain: `1分に ${fill}-${drain}=${fill - drain}L 増えるので、${water}÷${fill - drain}=${time}分です。`,
+  };
+}
+
+function generateEntranceAgeProblem() {
+  const child = randInt(6, 14);
+  const years = randInt(4, 16);
+  const parent = child * 2 + years;
+  return {
+    kind: "elementary-expert:age",
+    title: "中学受験 お受験",
+    skill: "年齢算",
+    text: `現在、子どもは <span class="math">${child}</span> 才、親は <span class="math">${parent}</span> 才です。親の年齢が子どもの年齢の2倍になるのは何年後ですか。`,
+    hint: "何年後かを□年後として、親も子どもも同じだけ年を取ることに注目します。",
+    answerType: "single",
+    answerLabel: "年後",
+    displayAnswer: `${years}年後`,
+    visual: { type: "english", heading: "年齢算", lines: [`子 ${child}才`, `親 ${parent}才`, "2倍"] },
+    check: (input) => numericEquals(stripUnit(input.value).replace(/年後|年/g, ""), years),
+    explain: `${years}年後には、子どもは ${child + years}才、親は ${parent + years}才で、${parent + years}=2×${child + years} です。`,
   };
 }
 
@@ -5575,16 +5777,26 @@ function countPrimes(max) {
   return count;
 }
 
-function generateHighSchoolEntranceMathProblem(unitId) {
-  if (unitId.includes("functions")) return generateHighSchoolEntranceFunctionProblem();
-  if (unitId.includes("geometry")) return generateHighSchoolEntranceGeometryProblem();
-  if (unitId.includes("data") || unitId.includes("probability")) return generateHighSchoolEntranceProbabilityProblem();
+function generateHighSchoolEntranceMathProblem(unitId, grade = 3) {
+  const gradeNumber = Number(grade) || 3;
+  if (gradeNumber <= 1 && (unitId.includes("numbers") || unitId.includes("linear") || unitId.includes("equations"))) {
+    return pick([generateHighSchoolEntranceWordEquationProblem, generateHighSchoolEntranceDataProblem, generateHighSchoolEntranceProbabilityProblem])();
+  }
+  if (gradeNumber <= 2 && (unitId.includes("linear") || unitId.includes("functions"))) {
+    return pick([generateHighSchoolEntranceLinearFunctionProblem, generateHighSchoolEntranceWordEquationProblem])();
+  }
+  if (unitId.includes("functions")) return pick([generateHighSchoolEntranceFunctionProblem, generateHighSchoolEntranceLinearFunctionProblem])();
+  if (unitId.includes("geometry")) return pick([generateHighSchoolEntranceGeometryProblem, generateHighSchoolEntranceCoordinateAreaProblem])();
+  if (unitId.includes("data") || unitId.includes("probability")) return pick([generateHighSchoolEntranceProbabilityProblem, generateHighSchoolEntranceDataProblem])();
   if (unitId.includes("quadratic") || unitId.includes("expansion")) return generateHighSchoolEntranceQuadraticProblem();
   return pick([
     generateHighSchoolEntranceQuadraticProblem,
     generateHighSchoolEntranceFunctionProblem,
     generateHighSchoolEntranceGeometryProblem,
     generateHighSchoolEntranceProbabilityProblem,
+    generateHighSchoolEntranceWordEquationProblem,
+    generateHighSchoolEntranceDataProblem,
+    generateHighSchoolEntranceCoordinateAreaProblem,
   ])();
 }
 
@@ -5596,7 +5808,7 @@ function generateHighSchoolEntranceQuadraticProblem() {
   const c = coefficient * r1 * r2;
   return {
     kind: "junior-expert:quadratic",
-    title: "高校入試 エキスパート",
+    title: "高校入試 お受験",
     skill: "二次方程式",
     text: `<span class="math">${coefficient === 1 ? "" : coefficient}x² ${formatTerm(b, "x", false)} ${formatConst(c, false)} = 0</span> を解きなさい。`,
     hint: "共通因数や因数分解を使い、積が0になる条件を考えます。",
@@ -5620,7 +5832,7 @@ function generateHighSchoolEntranceFunctionProblem() {
   const intercept = y1 - slope * x1;
   return {
     kind: "junior-expert:function-intersection",
-    title: "高校入試 エキスパート",
+    title: "高校入試 お受験",
     skill: "関数 y=ax²",
     text: `放物線 <span class="math">y=${formatCoeff(a)}x²</span> と直線 <span class="math">y=${formatLinear(slope, intercept)}</span> が2点で交わります。交点の1つのx座標が <span class="math">${x1}</span> のとき、もう1つの交点のx座標を求めなさい。`,
     hint: "直線と放物線の式を連立し、二次方程式の2つの解として考えます。",
@@ -5646,7 +5858,7 @@ function generateHighSchoolEntranceGeometryProblem() {
   if (!Number.isInteger(answer)) return generateHighSchoolEntranceGeometryProblem();
   return {
     kind: "junior-expert:geometry-similar",
-    title: "高校入試 エキスパート",
+    title: "高校入試 お受験",
     skill: "相似と三平方",
     text: `直角三角形Aの2辺は <span class="math">${a}cm</span>、<span class="math">${b}cm</span> です。これと相似な三角形Bは、Aに対して相似比 <span class="math">${scaleNumerator}:${scaleDenominator}</span> です。三角形Bの斜辺の長さを求めなさい。`,
     hint: "まずAの斜辺を三平方の定理で求め、相似比をかけます。",
@@ -5670,7 +5882,7 @@ function generateHighSchoolEntranceProbabilityProblem() {
   const answer = makeFraction(count, 36);
   return {
     kind: "junior-expert:probability-dice",
-    title: "高校入試 エキスパート",
+    title: "高校入試 お受験",
     skill: "確率",
     text:
       pattern === "sum"
@@ -5684,6 +5896,92 @@ function generateHighSchoolEntranceProbabilityProblem() {
     visual: { type: "probability", red: count, blue: 36 - count },
     check: (input) => fractionEquals(input.value, fractionToNumber(answer)),
     explain: `条件に合う場合は ${count} 通り、全部で36通りなので ${formatFraction(answer, { html: true })} です。`,
+  };
+}
+
+function generateHighSchoolEntranceWordEquationProblem() {
+  const priceA = pick([120, 150, 180, 200, 240]);
+  const priceB = pick([60, 80, 100, 120].filter((value) => value < priceA));
+  const totalCount = randInt(8, 18);
+  const countA = randInt(2, totalCount - 2);
+  const total = priceA * countA + priceB * (totalCount - countA);
+  return {
+    kind: "junior-expert:word-equation",
+    title: "高校入試 お受験",
+    skill: "方程式の利用",
+    text: `1個 <span class="math">${priceA}</span> 円の商品Aと、1個 <span class="math">${priceB}</span> 円の商品Bを合わせて <span class="math">${totalCount}</span> 個買うと、代金は <span class="math">${total}</span> 円でした。商品Aは何個買いましたか。`,
+    hint: "商品Aをx個とおき、商品Bは全体から引いて表します。",
+    answerType: "single",
+    answerLabel: "Aの個数",
+    displayAnswer: `${countA}個`,
+    visual: { type: "english", heading: "方程式", lines: [`A ${priceA}円`, `B ${priceB}円`, `合計 ${total}円`] },
+    check: (input) => numericEquals(stripUnit(input.value).replace(/個/g, ""), countA),
+    explain: `Aをx個とすると、${priceA}x+${priceB}(${totalCount}-x)=${total}。これを解いて x=${countA} です。`,
+  };
+}
+
+function generateHighSchoolEntranceLinearFunctionProblem() {
+  const slope = pick([-3, -2, -1, 1, 2, 3, 4]);
+  const intercept = randInt(-8, 8, [0]);
+  const x1 = randInt(-4, 1);
+  const x2 = randInt(2, 6, [x1]);
+  const x = randInt(-5, 7, [x1, x2]);
+  const y1 = slope * x1 + intercept;
+  const y2 = slope * x2 + intercept;
+  const answer = slope * x + intercept;
+  return {
+    kind: "junior-expert:linear-function",
+    title: "高校入試 お受験",
+    skill: "一次関数",
+    text: `直線は2点 <span class="math">(${x1}, ${y1})</span>、<span class="math">(${x2}, ${y2})</span> を通ります。この直線上で <span class="math">x=${x}</span> のとき、<span class="math">y</span> の値を求めなさい。`,
+    hint: "まず傾きを求め、一次関数 y=ax+b の形にします。",
+    answerType: "single",
+    answerLabel: "y",
+    displayAnswer: String(answer),
+    visual: { type: "graph", mode: "linear", a: slope, b: intercept, point: [x, answer] },
+    check: (input) => numericEquals(stripUnit(input.value), answer),
+    explain: `傾きは ${slope}、直線は y=${formatLinear(slope, intercept)}。したがって x=${x} のとき y=${answer} です。`,
+  };
+}
+
+function generateHighSchoolEntranceDataProblem() {
+  const count = randInt(5, 9);
+  const average = randInt(54, 78);
+  const added = randInt(70, 96);
+  const newAverage = (average * count + added) / (count + 1);
+  if (!Number.isInteger(newAverage)) return generateHighSchoolEntranceDataProblem();
+  return {
+    kind: "junior-expert:data-average",
+    title: "高校入試 お受験",
+    skill: "資料の活用",
+    text: `<span class="math">${count}</span> 人のテストの平均点は <span class="math">${average}</span> 点でした。あとから1人分の点数を加えると、平均点は <span class="math">${newAverage}</span> 点になりました。あとから加えた点数を求めなさい。`,
+    hint: "平均点×人数で合計点を作り、差を取ります。",
+    answerType: "single",
+    answerLabel: "点数",
+    displayAnswer: `${added}点`,
+    visual: { type: "english", heading: "平均", lines: [`${count}人 平均${average}`, `${count + 1}人 平均${newAverage}`, "追加点"] },
+    check: (input) => numericEquals(stripUnit(input.value).replace(/点/g, ""), added),
+    explain: `${count + 1}人の合計は ${newAverage}×${count + 1}=${newAverage * (count + 1)} 点。もとの合計 ${average * count} 点を引いて ${added} 点です。`,
+  };
+}
+
+function generateHighSchoolEntranceCoordinateAreaProblem() {
+  const base = pick([6, 8, 10, 12]);
+  const height = pick([4, 6, 8, 10]);
+  const x = randInt(1, base - 1);
+  const answer = (base * height) / 2;
+  return {
+    kind: "junior-expert:coordinate-area",
+    title: "高校入試 お受験",
+    skill: "座標と図形",
+    text: `座標平面上に3点 <span class="math">A(0,0)</span>、<span class="math">B(${base},0)</span>、<span class="math">C(${x},${height})</span> があります。三角形ABCの面積を求めなさい。`,
+    hint: "底辺をAB、高さをCのy座標として考えます。",
+    answerType: "single",
+    answerLabel: "面積",
+    displayAnswer: `${answer}`,
+    visual: { type: "english", heading: "座標と面積", lines: [`底辺 ${base}`, `高さ ${height}`, "三角形"] },
+    check: (input) => numericEquals(stripUnit(input.value), answer),
+    explain: `ABを底辺にすると長さは ${base}、高さは ${height}。面積は ${base}×${height}÷2=${answer} です。`,
   };
 }
 
