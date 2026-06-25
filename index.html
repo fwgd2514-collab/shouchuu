@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>学習トレーナー</title>
-  <link rel="stylesheet" href="./styles.css?v=20260624-ojuken-sounds" />
+  <link rel="stylesheet" href="./styles.css?v=20260625-sound-defaults-bank100" />
   </head>
   <body class="teacher-mode">
     <div class="app-shell">
@@ -98,6 +98,7 @@
                 <a class="secondary guide-link" href="./learning-guide.html" target="_blank" rel="noreferrer">説明書</a>
                 <button class="secondary" id="printWorkbook" type="button">選択問題集を印刷</button>
                 <button class="secondary" id="refreshCache" type="button">最新版に更新</button>
+                <button class="secondary" id="showQuestionCounts" type="button">問題数一覧</button>
                 <button class="secondary" id="resetStats" type="button">記録をリセット</button>
                 <button class="primary" id="startSession" type="button">学習開始</button>
               </div>
@@ -248,25 +249,35 @@
       </section>
     </div>
 
-    <div class="school-choice-backdrop" id="schoolChoice" role="dialog" aria-modal="true" aria-labelledby="schoolChoiceTitle" hidden>
-      <section class="school-choice">
-        <p class="unit-kicker">学習コース</p>
-        <h2 id="schoolChoiceTitle">どちらで学習しますか</h2>
-        <div class="school-choice-grid">
-          <button class="school-choice-card" type="button" data-school-stage="elementary">
-            <span>小</span>
-            <strong>小学生</strong>
-            <small>小1〜小6 / 算数・国語・理科・社会・英語</small>
-          </button>
-          <button class="school-choice-card" type="button" data-school-stage="junior">
-            <span>中</span>
-            <strong>中学生</strong>
-            <small>中1〜中3 / 5教科</small>
-          </button>
+    <div class="print-dialog-backdrop" id="questionCountDialog" hidden>
+      <section class="print-dialog question-count-dialog" role="dialog" aria-modal="true" aria-labelledby="questionCountDialogTitle">
+        <div class="print-dialog-head">
+          <div>
+            <p class="unit-kicker">問題数一覧</p>
+            <h2 id="questionCountDialogTitle">学年・単元ごとの問題数</h2>
+          </div>
+          <button class="icon-button" id="closeQuestionCountDialog" type="button" aria-label="閉じる">×</button>
+        </div>
+        <div class="question-count-summary" id="questionCountSummary"></div>
+        <div class="question-count-table-wrap">
+          <table class="question-count-table">
+            <thead>
+              <tr>
+                <th>学年</th>
+                <th>教科</th>
+                <th>単元</th>
+                <th>基礎</th>
+                <th>標準</th>
+                <th>発展</th>
+                <th>お受験</th>
+              </tr>
+            </thead>
+            <tbody id="questionCountTableBody"></tbody>
+          </table>
         </div>
       </section>
     </div>
 
-  <script src="./app.js?v=20260624-ojuken-sounds"></script>
+  <script src="./app.js?v=20260625-sound-defaults-bank100"></script>
   </body>
 </html>

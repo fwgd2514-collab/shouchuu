@@ -690,37 +690,61 @@ const RECENT_QUESTION_LIMIT = 180;
 const QUESTION_ROLL_ATTEMPTS = 900;
 const PRINT_QUESTIONS_PER_PAGE = 20;
 const PRINT_MAX_PAGES_PER_UNIT = 8;
+const QUESTION_COUNT_ESTIMATE_LIMIT = 160;
+const QUESTION_COUNT_STALE_LIMIT = 180;
+const QUESTION_FRAME_VARIANTS = Object.freeze([
+  "基本確認",
+  "短答確認",
+  "入試準備",
+  "理解チェック",
+  "まとめ確認",
+  "弱点補強",
+  "一問集中",
+  "復習確認",
+  "実力確認",
+  "説明準備",
+  "用語確認",
+  "判断練習",
+  "得点練習",
+  "スピード確認",
+  "ミス防止",
+  "応用入口",
+]);
+const QUESTION_FOCUS_VARIANTS = Object.freeze([
+  "意味を思い出す",
+  "正確に答える",
+  "根拠を考える",
+  "似た内容と区別する",
+  "短く答える",
+  "声に出して確認する",
+  "説明できる形で答える",
+  "重要語を意識する",
+  "単元名と結びつける",
+  "次に間違えないようにする",
+]);
 const SOUND_LIBRARY = Object.freeze([
   { id: "none", label: "なし", src: "" },
+  { id: "question", label: "出題音", src: "./assets/sounds/question.mp3" },
+  { id: "answer", label: "回答開始音", src: "./assets/sounds/answer.mp3" },
+  { id: "check", label: "答え合わせ音", src: "./assets/sounds/check.mp3" },
+  { id: "correct", label: "正解音", src: "./assets/sounds/correct.mp3" },
+  { id: "wrong", label: "誤答音", src: "./assets/sounds/wrong.mp3" },
   { id: "data-display-1", label: "データ表示1", src: "./assets/sounds/data-display-1.mp3" },
-  { id: "button-37", label: "決定ボタン37", src: "./assets/sounds/button-37.mp3" },
+  { id: "data-display-2", label: "データ表示2", src: "./assets/sounds/data-display-2.mp3" },
+  { id: "button-37", label: "決定ボタン1", src: "./assets/sounds/button-37.mp3" },
+  { id: "button-confirm-5", label: "決定ボタン2", src: "./assets/sounds/button-confirm-5.mp3" },
+  { id: "button-confirm-7", label: "決定ボタン3", src: "./assets/sounds/button-confirm-7.mp3" },
+  { id: "button-confirm-4", label: "決定ボタン4", src: "./assets/sounds/button-confirm-4.mp3" },
   { id: "beep-1", label: "ビープ音1", src: "./assets/sounds/beep-1.mp3" },
-  { id: "success", label: "成功音", src: "./assets/sounds/success.mp3" },
-  { id: "button-4", label: "決定ボタン4", src: "./assets/sounds/決定ボタンを押す4.mp3" },
-  { id: "button-5", label: "決定ボタン5", src: "./assets/sounds/決定ボタンを押す5.mp3" },
-  { id: "button-7", label: "決定ボタン7", src: "./assets/sounds/決定ボタンを押す7.mp3" },
-  { id: "warning-1", label: "警告音1", src: "./assets/sounds/警告音1.mp3" },
-  { id: "warning-2", label: "警告音2", src: "./assets/sounds/警告音2.mp3" },
-  { id: "message-3", label: "メッセージ表示音3", src: "./assets/sounds/メッセージ表示音3.mp3" },
-  { id: "gauge-recover-1", label: "ゲージ回復1", src: "./assets/sounds/ゲージ回復1.mp3" },
-  { id: "window-open", label: "説明ウインドウが開く", src: "./assets/sounds/説明ウインドウが開く.mp3" },
-  { id: "roulette-stop", label: "電子ルーレット停止", src: "./assets/sounds/電子ルーレットが徐々に止まる.mp3" },
-  { id: "tone-pop", label: "電子音 ポップ", tone: "tone-pop" },
-  { id: "tone-rise", label: "電子音 上昇", tone: "tone-rise" },
-  { id: "tone-chime", label: "電子音 チャイム", tone: "tone-chime" },
-  { id: "tone-tap", label: "電子音 タップ", tone: "tone-tap" },
-  { id: "tone-bell", label: "電子音 ベル", tone: "tone-bell" },
-  { id: "tone-soft-wrong", label: "電子音 やさしい不正解", tone: "tone-soft-wrong" },
-  { id: "tone-ready", label: "電子音 準備", tone: "tone-ready" },
-  { id: "tone-finish", label: "電子音 完了", tone: "tone-finish" },
-  { id: "voice-ei", label: "えいっ！", src: "./assets/sounds/voice-ei.mp3" },
-  { id: "voice-yasashiku", label: "お手柔らかに…", src: "./assets/sounds/voice-yasashiku.mp3" },
-  { id: "voice-yarimashita", label: "やりました！", src: "./assets/sounds/voice-yarimashita.mp3" },
-  { id: "voice-ataru", label: "当たって！", src: "./assets/sounds/voice-ataru.mp3" },
-  { id: "voice-junbi", label: "心の準備をしないと…！", src: "./assets/sounds/voice-junbi.mp3" },
-  { id: "voice-megamawari", label: "目が回りますぅ～…", src: "./assets/sounds/voice-megamawari.mp3" },
-  { id: "voice-kaminosabaki", label: "神の裁きを！", src: "./assets/sounds/voice-kaminosabaki.mp3" },
-  { id: "voice-makemashita", label: "負けました…", src: "./assets/sounds/voice-makemashita.mp3" },
+  { id: "beep-2", label: "ビープ音2", src: "./assets/sounds/beep-2.mp3" },
+  { id: "success", label: "成功音1", src: "./assets/sounds/success.mp3" },
+  { id: "success-alt", label: "成功音2", src: "./assets/sounds/success-alt.mp3" },
+  { id: "warning-1", label: "警告音1", src: "./assets/sounds/warning-1.mp3" },
+  { id: "warning-2", label: "警告音2", src: "./assets/sounds/warning-2.mp3" },
+  { id: "message-popup-3", label: "メッセージ音3", src: "./assets/sounds/message-popup-3.mp3" },
+  { id: "gauge-recover-1", label: "ゲージ回復1", src: "./assets/sounds/gauge-recover-1.mp3" },
+  { id: "window-open", label: "ウインドウ表示", src: "./assets/sounds/window-open.mp3" },
+  { id: "roulette-stop", label: "ルーレット停止", src: "./assets/sounds/roulette-stop.mp3" },
 ]);
 const SOUND_EVENTS = Object.freeze([
   { id: "question", label: "出題時" },
@@ -747,27 +771,27 @@ const SOUND_EVENTS = Object.freeze([
   { id: "operation", label: "その他の操作" },
 ]);
 const DEFAULT_SOUND_SETTINGS = Object.freeze({
-  question: "data-display-1",
-  answer: "button-37",
-  check: "beep-1",
-  correct: "success",
-  wrong: "voice-makemashita",
-  result: "tone-finish",
-  next: "none",
-  return: "none",
-  start: "none",
-  quit: "voice-junbi",
-  restart: "none",
-  stage: "none",
-  teacher: "none",
-  student: "none",
-  subject: "none",
-  grade: "none",
-  unit: "none",
-  level: "none",
-  print: "none",
-  settings: "none",
-  memo: "none",
+  question: "question",
+  answer: "answer",
+  check: "answer",
+  correct: "correct",
+  wrong: "wrong",
+  result: "success",
+  next: "button-confirm-4",
+  return: "button-confirm-4",
+  start: "button-confirm-4",
+  quit: "warning-1",
+  restart: "button-confirm-4",
+  stage: "success-alt",
+  teacher: "button-confirm-4",
+  student: "success-alt",
+  subject: "button-confirm-4",
+  grade: "success-alt",
+  unit: "button-confirm-4",
+  level: "warning-1",
+  print: "button-confirm-4",
+  settings: "warning-1",
+  memo: "warning-1",
   operation: "none",
 });
 const SOUND_VOLUME = Object.freeze({
@@ -867,7 +891,6 @@ const state = {
 const els = {
   appEyebrow: document.querySelector("#appEyebrow"),
   appTitle: document.querySelector("#appTitle"),
-  schoolChoice: document.querySelector("#schoolChoice"),
   schoolStageButton: document.querySelector("#schoolStageButton"),
   teacherScreen: document.querySelector("#teacherScreen"),
   studentScreen: document.querySelector("#studentScreen"),
@@ -899,6 +922,11 @@ const els = {
   printPages: document.querySelector("#printPages"),
   printEstimate: document.querySelector("#printEstimate"),
   refreshCache: document.querySelector("#refreshCache"),
+  showQuestionCounts: document.querySelector("#showQuestionCounts"),
+  questionCountDialog: document.querySelector("#questionCountDialog"),
+  closeQuestionCountDialog: document.querySelector("#closeQuestionCountDialog"),
+  questionCountSummary: document.querySelector("#questionCountSummary"),
+  questionCountTableBody: document.querySelector("#questionCountTableBody"),
   restartSession: document.querySelector("#restartSession"),
   beginAnswer: document.querySelector("#beginAnswer"),
   checkAnswer: document.querySelector("#checkAnswer"),
@@ -943,6 +971,7 @@ const ctx = els.canvas.getContext("2d");
 let audioContext = null;
 const soundPlayers = new Map();
 const activeSounds = new Set();
+const questionCountEstimateCache = new Map();
 
 function boot() {
   updateDeviceClass();
@@ -1016,7 +1045,7 @@ function applySchoolStage() {
   if (!getSubjects().some((subject) => subject.id === state.subject)) state.subject = config.defaultSubject;
   if (!getGrades().some((grade) => grade.id === state.grade)) state.grade = config.defaultGrade;
   const unitsForGrade = getCurriculum()[state.subject]?.[state.grade] || [];
-  if (!unitsForGrade.some((unit) => unit.id === state.unitId)) state.unitId = unitsForGrade[0]?.id || "";
+  if (state.unitId !== "all" && !unitsForGrade.some((unit) => unit.id === state.unitId)) state.unitId = unitsForGrade[0]?.id || "";
   ensureAvailableLevel();
   els.appEyebrow.textContent = config.eyebrow;
   els.appTitle.textContent = config.title;
@@ -1026,22 +1055,8 @@ function applySchoolStage() {
   document.body.classList.toggle("junior-stage", config.id === "junior");
 }
 
-function showSchoolStageChooser() {
-  els.schoolChoice.hidden = false;
-  document.body.classList.add("stage-chooser-open");
-  els.schoolChoice.querySelectorAll("[data-school-stage]").forEach((button) => {
-    button.classList.toggle("active", button.dataset.schoolStage === state.schoolStage);
-  });
-  window.setTimeout(() => {
-    const active = els.schoolChoice.querySelector(`[data-school-stage="${CSS.escape(state.schoolStage)}"]`);
-    (active || els.schoolChoice.querySelector("[data-school-stage]"))?.focus({ preventScroll: true });
-  }, 30);
-}
-
-function hideSchoolStageChooser() {
-  els.schoolChoice.hidden = true;
-  document.body.classList.remove("stage-chooser-open");
-  window.setTimeout(focusTeacherStartButton, 30);
+function toggleSchoolStage() {
+  chooseSchoolStage(state.schoolStage === "junior" ? "elementary" : "junior");
 }
 
 function chooseSchoolStage(stageId) {
@@ -1072,7 +1087,7 @@ function chooseSchoolStage(stageId) {
     applySchoolStage();
     saveSchoolStage();
   }
-  hideSchoolStageChooser();
+  window.setTimeout(focusTeacherStartButton, 30);
 }
 
 function renderControls() {
@@ -1096,8 +1111,16 @@ function renderControls() {
     )
     .join("");
 
-  els.unitList.innerHTML = getAvailableUnits()
-    .map(
+  const availableUnits = getAvailableUnits();
+  els.unitList.innerHTML = [
+    `
+      <button class="unit-button all-unit-button ${state.unitId === "all" ? "active" : ""}" type="button" data-unit="all">
+        <span style="background:#172033">全</span>
+        <strong>全単元</strong>
+        <small>${availableUnits.length}</small>
+      </button>
+    `,
+    ...availableUnits.map(
       (unit) => `
         <button class="unit-button ${unit.id === state.unitId ? "active" : ""}" type="button" data-unit="${unit.id}">
           <span style="background:${unit.color}">${unit.mark}</span>
@@ -1105,8 +1128,8 @@ function renderControls() {
           <small>${unit.skills.length}</small>
         </button>
       `
-    )
-    .join("");
+    ),
+  ].join("");
 
   ensureAvailableLevel();
   els.levelTabs.innerHTML = getAvailableLevels()
@@ -1224,18 +1247,13 @@ function bindEvents() {
   document.addEventListener("pointerdown", handleOperationSound);
   els.startSession.addEventListener("click", startStudentSession);
   els.teacherModeButton.addEventListener("click", requestTeacherMode);
-  els.schoolStageButton.addEventListener("click", showSchoolStageChooser);
-  els.schoolChoice.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-school-stage]");
-    if (!button) return;
-    chooseSchoolStage(button.dataset.schoolStage);
-  });
+  els.schoolStageButton.addEventListener("click", toggleSchoolStage);
 
   els.subjectTabs.addEventListener("click", (event) => {
     const button = event.target.closest("[data-subject]");
     if (!button) return;
     state.subject = button.dataset.subject;
-    state.unitId = getAvailableUnits()[0].id;
+    if (state.unitId !== "all") state.unitId = getAvailableUnits()[0]?.id || "";
     state.questionNumber = 1;
     renderControls();
     newQuestion(true);
@@ -1246,7 +1264,7 @@ function bindEvents() {
     const button = event.target.closest("[data-grade]");
     if (!button) return;
     state.grade = button.dataset.grade;
-    state.unitId = getAvailableUnits()[0].id;
+    if (state.unitId !== "all") state.unitId = getAvailableUnits()[0]?.id || "";
     state.questionNumber = 1;
     renderControls();
     newQuestion(true);
@@ -1331,6 +1349,11 @@ function bindEvents() {
     if (event.target === els.printDialog) closePrintDialog();
   });
   els.refreshCache.addEventListener("click", refreshAppCache);
+  els.showQuestionCounts.addEventListener("click", openQuestionCountDialog);
+  els.closeQuestionCountDialog.addEventListener("click", closeQuestionCountDialog);
+  els.questionCountDialog.addEventListener("click", (event) => {
+    if (event.target === els.questionCountDialog) closeQuestionCountDialog();
+  });
   els.mobileSimpleMode.addEventListener("change", updateMobileSimpleMode);
   els.soundSettings.addEventListener("change", updateSoundSetting);
   els.clearMemo.addEventListener("click", clearScratchPad);
@@ -1339,6 +1362,7 @@ function bindEvents() {
   els.inlineScratchPad?.addEventListener("input", () => syncScratchPads(els.inlineScratchPad));
   document.addEventListener("keydown", handleStudentEnterShortcut);
   document.addEventListener("keydown", handlePrintDialogShortcut);
+  document.addEventListener("keydown", handleQuestionCountDialogShortcut);
 
   els.answerArea.addEventListener("keydown", (event) => {
     if (event.key !== "Enter") return;
@@ -1367,13 +1391,13 @@ function handleOperationSound(event) {
 function getOperationSoundType(target) {
   if (target.matches("#beginAnswer, #checkAnswer, #saveQuestion, #nextQuestion, #returnSelection, #restartSession, #startSession, #teacherModeButton")) return null;
   if (target.closest("#soundSettings")) return "settings";
-  if (target.matches("#schoolStageButton") || target.closest("#schoolChoice") || target.matches("[data-school-stage]")) return "stage";
+  if (target.matches("#schoolStageButton")) return "stage";
   if (target.matches("[data-subject]")) return "subject";
   if (target.matches("[data-grade]")) return "grade";
   if (target.matches("[data-unit]")) return "unit";
   if (target.matches("[data-level]")) return "level";
   if (target.matches("[data-student], [data-result-student], [data-remove-student]") || target.closest("#studentForm")) return "student";
-  if (target.matches("#printWorkbook, #closePrintDialog, #cancelPrintWorkbook, #createPrintWorkbook, #runPrintPreview, #closePrintPreview")) return "print";
+  if (target.matches("#printWorkbook, #closePrintDialog, #cancelPrintWorkbook, #createPrintWorkbook, #runPrintPreview, #closePrintPreview, #showQuestionCounts, #closeQuestionCountDialog")) return "print";
   if (target.closest("#printDialog") || target.matches("#printSubject, #printGrade, #printUnit, #printLevel, #printPages")) return "print";
   if (target.matches("#mobileSimpleMode, #questionCount, #refreshCache, #mistakeMode")) return "settings";
   if (target.matches("#clearMemo, #clearInlineMemo")) return "memo";
@@ -1476,6 +1500,12 @@ function handlePrintDialogShortcut(event) {
   createSelectedPrintWorkbook();
 }
 
+function handleQuestionCountDialogShortcut(event) {
+  if (els.questionCountDialog.hidden || event.key !== "Escape") return;
+  event.preventDefault();
+  closeQuestionCountDialog();
+}
+
 function renderPrintDialogOptions() {
   els.printSubject.innerHTML = getSubjects()
     .map((subject) => `<option value="${subject.id}" ${subject.id === state.subject ? "selected" : ""}>${subject.name}</option>`)
@@ -1545,7 +1575,87 @@ function getPrintUnits(selection) {
   return selection.unitId && selection.unitId !== "all" ? unitsForGrade.filter((unit) => unit.id === selection.unitId) : unitsForGrade;
 }
 
+function resetSoundSettingsToDefaults() {
+  state.soundSettings = { ...DEFAULT_SOUND_SETTINGS };
+  saveSoundSettings();
+  renderSoundSettings();
+}
+
+function openQuestionCountDialog() {
+  renderQuestionCountDialog();
+  els.questionCountDialog.hidden = false;
+  window.setTimeout(() => els.closeQuestionCountDialog.focus({ preventScroll: true }), 30);
+}
+
+function closeQuestionCountDialog() {
+  els.questionCountDialog.hidden = true;
+  window.setTimeout(focusTeacherStartButton, 30);
+}
+
+function renderQuestionCountDialog() {
+  const config = getSchoolStageConfig();
+  const rows = [];
+  let totalMinimum = 0;
+  let cappedCount = 0;
+
+  config.grades.forEach((grade) => {
+    config.subjects.forEach((subject) => {
+      const unitsForGrade = config.curriculum[subject.id]?.[grade.id] || [];
+      unitsForGrade.forEach((unit) => {
+        const counts = getAvailableLevels(config.id, grade.id).reduce((acc, level) => {
+          const estimate = estimateQuestionCount(config.id, subject.id, grade.id, unit, level.id);
+          acc[level.id] = formatQuestionCountEstimate(estimate);
+          totalMinimum += estimate.count;
+          if (estimate.capped) cappedCount += 1;
+          return acc;
+        }, {});
+        rows.push(`
+          <tr>
+            <td>${escapeHtml(grade.name)}</td>
+            <td>${escapeHtml(subject.name)}</td>
+            <td>${escapeHtml(unit.name)}</td>
+            <td>${counts.basic || "-"}</td>
+            <td>${counts.standard || "-"}</td>
+            <td>${counts.advanced || "-"}</td>
+            <td>${counts.expert || "-"}</td>
+          </tr>
+        `);
+      });
+    });
+  });
+
+  els.questionCountSummary.textContent = `${config.name}コースの各単元で生成できる問題数の目安です。合計は少なくとも${totalMinimum}問${cappedCount ? "以上" : ""}です。`;
+  els.questionCountTableBody.innerHTML = rows.join("");
+}
+
+function estimateQuestionCount(stageId, subjectId, gradeId, unit, levelId) {
+  const cacheKey = `${stageId}:${subjectId}:${gradeId}:${unit.id}:${levelId}`;
+  if (questionCountEstimateCache.has(cacheKey)) return questionCountEstimateCache.get(cacheKey);
+
+  const keys = new Set();
+  let staleAttempts = 0;
+  const selection = { schoolStageId: stageId, subjectId, gradeId };
+  const attemptLimit = QUESTION_COUNT_ESTIMATE_LIMIT * 12;
+
+  for (let attempt = 0; attempt < attemptLimit && keys.size < QUESTION_COUNT_ESTIMATE_LIMIT && staleAttempts < QUESTION_COUNT_STALE_LIMIT; attempt += 1) {
+    const problem = createProblemForUnit(unit, levelId, [], selection);
+    const key = `${unit.id}|${getPrintQuestionIdentity(problem)}`;
+    const before = keys.size;
+    keys.add(key);
+    staleAttempts = keys.size === before ? staleAttempts + 1 : 0;
+  }
+
+  const estimate = { count: keys.size, capped: keys.size >= QUESTION_COUNT_ESTIMATE_LIMIT };
+  questionCountEstimateCache.set(cacheKey, estimate);
+  return estimate;
+}
+
+function formatQuestionCountEstimate(estimate) {
+  return estimate.capped ? `${estimate.count}+` : String(estimate.count);
+}
+
 async function refreshAppCache() {
+  resetSoundSettingsToDefaults();
   els.refreshCache.disabled = true;
   els.refreshCache.textContent = "更新中...";
   try {
@@ -2109,11 +2219,25 @@ function createProblemForUnit(unit, levelId, weights = [], context = {}) {
   const stageId = context.schoolStageId || state.schoolStage;
   const gradeId = context.gradeId || state.grade;
   const subjectId = context.subjectId || state.subject;
+  let problem = null;
   if (levelId === "expert") {
     const expert = generateExpertProblem({ stageId, gradeId, subjectId, unit, weights });
-    if (expert) return expert;
+    if (expert) problem = expert;
   }
-  return unit.generator(getGeneratorLevel(levelId), weights);
+  if (!problem) problem = unit.generator(getGeneratorLevel(levelId), weights);
+  return applyQuestionVariant(problem);
+}
+
+function applyQuestionVariant(problem) {
+  const frameIndex = randInt(0, QUESTION_FRAME_VARIANTS.length - 1);
+  const focusIndex = randInt(0, QUESTION_FOCUS_VARIANTS.length - 1);
+  const frame = QUESTION_FRAME_VARIANTS[frameIndex];
+  const focus = QUESTION_FOCUS_VARIANTS[focusIndex];
+  const variantId = `${frameIndex + 1}-${focusIndex + 1}`;
+  const baseIdentity = problem.identityKey || `${problem.kind}|${stripTags(problem.text)}|${problem.displayAnswer || ""}`;
+  problem.identityKey = `${baseIdentity}|variant:${variantId}`;
+  problem.text = `<span class="question-variant">${frame} / ${focus}</span><br>${problem.text}`;
+  return problem;
 }
 
 function generateExpertProblem({ stageId, gradeId, subjectId, unit, weights }) {
@@ -2560,7 +2684,7 @@ function showSessionResult() {
   state.session.completed = true;
   state.sessionSnapshot = null;
   els.resultKicker.textContent = `${student ? student.name : "生徒"} / ${getCurrentGrade().name} ${getCurrentSubject().name}`;
-  els.resultTitle.textContent = `${getCurrentUnit().name} の結果`;
+  els.resultTitle.textContent = `${getCurrentUnitDisplayName()} の結果`;
   els.resultCorrect.textContent = String(correct);
   els.resultTotal.textContent = String(total);
   els.resultAccuracy.textContent = total ? `${accuracy}%` : "--";
@@ -2642,11 +2766,6 @@ function getSoundSource(type) {
 function playSound(type) {
   const selected = getSelectedSound(type);
   if (!selected || selected.id === "none") return;
-  if (selected.tone) {
-    playToneSound(selected.tone);
-    return;
-  }
-
   const basePlayer = getSoundPlayer(type);
   if (basePlayer) {
     const player = basePlayer.cloneNode(true);
@@ -2659,112 +2778,9 @@ function playSound(type) {
     if (promise?.catch) {
       promise.catch(() => {
         release();
-        playToneSound(type);
       });
     }
-    return;
   }
-  playToneSound(type);
-}
-
-function playToneSound(type) {
-  const context = getAudioContext();
-  if (!context) return;
-  if (context.state === "suspended") context.resume().catch(() => {});
-
-  const patterns = {
-    question: [
-      { frequency: 620, duration: 0.08, delay: 0, volume: 0.045 },
-      { frequency: 820, duration: 0.1, delay: 0.09, volume: 0.055 },
-    ],
-    answer: [{ frequency: 540, duration: 0.08, delay: 0, volume: 0.05 }],
-    operation: [{ frequency: 480, duration: 0.05, delay: 0, volume: 0.035 }],
-    hold: [
-      { frequency: 420, duration: 0.08, delay: 0, volume: 0.045 },
-      { frequency: 520, duration: 0.08, delay: 0.09, volume: 0.045 },
-    ],
-    check: [
-      { frequency: 760, duration: 0.045, delay: 0, volume: 0.05 },
-      { frequency: 760, duration: 0.045, delay: 0.07, volume: 0.05 },
-    ],
-    correct: [
-      { frequency: 660, duration: 0.08, delay: 0, volume: 0.06 },
-      { frequency: 880, duration: 0.1, delay: 0.09, volume: 0.07 },
-      { frequency: 1040, duration: 0.12, delay: 0.19, volume: 0.06 },
-    ],
-    wrong: [
-      { frequency: 360, duration: 0.12, delay: 0, volume: 0.055, type: "triangle" },
-      { frequency: 260, duration: 0.16, delay: 0.12, volume: 0.05, type: "triangle" },
-    ],
-    "tone-pop": [
-      { frequency: 520, duration: 0.055, delay: 0, volume: 0.045 },
-      { frequency: 780, duration: 0.075, delay: 0.055, volume: 0.055 },
-    ],
-    "tone-rise": [
-      { frequency: 440, duration: 0.07, delay: 0, volume: 0.042 },
-      { frequency: 660, duration: 0.07, delay: 0.07, volume: 0.05 },
-      { frequency: 880, duration: 0.09, delay: 0.14, volume: 0.052 },
-    ],
-    "tone-chime": [
-      { frequency: 660, duration: 0.12, delay: 0, volume: 0.045 },
-      { frequency: 990, duration: 0.16, delay: 0.08, volume: 0.038 },
-    ],
-    "tone-tap": [{ frequency: 520, duration: 0.035, delay: 0, volume: 0.035, type: "square" }],
-    "tone-bell": [
-      { frequency: 740, duration: 0.11, delay: 0, volume: 0.048 },
-      { frequency: 1110, duration: 0.16, delay: 0.075, volume: 0.04 },
-    ],
-    "tone-soft-wrong": [
-      { frequency: 360, duration: 0.09, delay: 0, volume: 0.036, type: "triangle" },
-      { frequency: 320, duration: 0.13, delay: 0.09, volume: 0.032, type: "triangle" },
-    ],
-    "tone-ready": [
-      { frequency: 500, duration: 0.06, delay: 0, volume: 0.038 },
-      { frequency: 500, duration: 0.06, delay: 0.09, volume: 0.038 },
-    ],
-    "tone-finish": [
-      { frequency: 620, duration: 0.08, delay: 0, volume: 0.05 },
-      { frequency: 820, duration: 0.08, delay: 0.08, volume: 0.055 },
-      { frequency: 1040, duration: 0.14, delay: 0.16, volume: 0.052 },
-    ],
-  };
-  const aliases = {
-    result: "tone-finish",
-    next: "operation",
-    return: "tone-ready",
-    start: "tone-ready",
-    quit: "hold",
-    restart: "tone-ready",
-    stage: "tone-rise",
-    teacher: "tone-chime",
-    student: "tone-pop",
-    subject: "operation",
-    grade: "operation",
-    unit: "operation",
-    level: "tone-rise",
-    print: "tone-chime",
-    settings: "operation",
-    memo: "operation",
-  };
-  const tones = patterns[type] || patterns[aliases[type]];
-  if (!tones) return;
-
-  const start = context.currentTime + 0.01;
-  tones.forEach((tone) => {
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    const toneStart = start + tone.delay;
-    const toneEnd = toneStart + tone.duration;
-    oscillator.type = tone.type || "sine";
-    oscillator.frequency.setValueAtTime(tone.frequency, toneStart);
-    gain.gain.setValueAtTime(0.0001, toneStart);
-    gain.gain.exponentialRampToValueAtTime(tone.volume, toneStart + 0.01);
-    gain.gain.exponentialRampToValueAtTime(0.0001, toneEnd);
-    oscillator.connect(gain);
-    gain.connect(context.destination);
-    oscillator.start(toneStart);
-    oscillator.stop(toneEnd + 0.03);
-  });
 }
 
 function renderStats() {
@@ -2924,7 +2940,7 @@ function buildLearningAdviceCards(stats) {
       tone: "start",
       label: "はじめの一歩",
       title: "まずは5問分の記録を作りましょう",
-      body: `${getSchoolStageConfig().name}コースで少し解くと、苦手な単元や教科が見え始めます。今日は${getCurrentSubject().name}の${getCurrentUnit()?.name || "選択単元"}から始めるのがよさそうです。`,
+      body: `${getSchoolStageConfig().name}コースで少し解くと、苦手な単元や教科が見え始めます。今日は${getCurrentSubject().name}の${getCurrentUnitDisplayName()}から始めるのがよさそうです。`,
       detail: "5問終わると、次に何を復習するかを絞りやすくなります。",
     });
   }
@@ -3185,7 +3201,13 @@ function resetStats() {
 }
 
 function getCurrentUnit() {
-  return getAvailableUnits().find((unit) => unit.id === state.unitId) || getAvailableUnits()[0];
+  const units = getAvailableUnits();
+  if (state.unitId === "all") return pick(units);
+  return units.find((unit) => unit.id === state.unitId) || units[0];
+}
+
+function getCurrentUnitDisplayName() {
+  return state.unitId === "all" ? "全単元" : getCurrentUnit()?.name || "選択単元";
 }
 
 function getActiveStudent() {
