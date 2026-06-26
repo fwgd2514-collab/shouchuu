@@ -686,6 +686,7 @@ const ANSWER_AUTO_START_MS = 500;
 const AUTO_ADVANCE_MS = 2200;
 const HOLD_ADVANCE_MS = 1400;
 const RESULT_RETURN_MS = 5200;
+const KEYBOARD_OPEN_THRESHOLD = 96;
 const RECENT_QUESTION_LIMIT = 180;
 const QUESTION_ROLL_ATTEMPTS = 900;
 const PRINT_QUESTIONS_PER_PAGE = 20;
@@ -984,6 +985,7 @@ function boot() {
   renderSoundSettings();
   renderDeviceSettings();
   bindEvents();
+  setupVisualViewportGuard();
   newQuestion(true);
   renderStats();
   renderHistory();
@@ -996,6 +998,12 @@ function setMode(mode) {
   state.mode = mode;
   document.body.classList.toggle("teacher-mode", mode === "teacher");
   document.body.classList.toggle("student-mode", mode === "student");
+  if (mode !== "student") {
+    document.body.classList.remove("input-focus-active", "keyboard-open", "answer-focus-active", "memo-focus-active");
+    document.documentElement.style.setProperty("--keyboard-inset", "0px");
+  } else {
+    updateKeyboardViewportState();
+  }
   els.studentScreen.classList.remove("show-result");
   if (mode === "student") {
     window.setTimeout(() => {
@@ -2351,6 +2359,69 @@ function isTouchDevice() {
 
 function updateDeviceClass() {
   document.body.classList.toggle("touch-device", isTouchDevice());
+}
+
+function setupVisualViewportGuard() {
+  updateKeyboardViewportState();
+  window.visualViewport?.addEventListener("resize", updateKeyboardViewportState);
+  window.visualViewport?.addEventListener("scroll", updateKeyboardViewportState);
+  window.addEventListener("resize", updateKeyboardViewportState);
+  document.addEventListener("focusin", handleKeyboardFocusIn);
+  document.addEventListener("focusout", handleKeyboardFocusOut);
+}
+
+function handleKeyboardFocusIn(event) {
+  if (!isKeyboardManagedField(event.target)) return;
+  document.body.classList.add("input-focus-active");
+  const memoFocus = Boolean(event.target.closest(".memo-box"));
+  document.body.classList.toggle("memo-focus-active", memoFocus);
+  document.body.classList.toggle("answer-focus-active", !memoFocus);
+  window.setTimeout(() => {
+    updateKeyboardViewportState();
+    ensureActiveInputVisible(event.target);
+  }, 80);
+  window.setTimeout(() => ensureActiveInputVisible(event.target), 320);
+}
+
+function handleKeyboardFocusOut(event) {
+  if (!isKeyboardManagedField(event.target)) return;
+  window.setTimeout(() => {
+    if (isKeyboardManagedField(document.activeElement)) return;
+    document.body.classList.remove("input-focus-active", "keyboard-open", "answer-focus-active", "memo-focus-active");
+    document.documentElement.style.setProperty("--keyboard-inset", "0px");
+  }, 120);
+}
+
+function isKeyboardManagedField(target) {
+  return Boolean(
+    target?.matches?.("input, textarea") &&
+      target.closest?.("#studentScreen") &&
+      state.mode === "student"
+  );
+}
+
+function updateKeyboardViewportState() {
+  const viewport = window.visualViewport;
+  const layoutHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+  const visualHeight = viewport?.height || layoutHeight;
+  const offsetTop = viewport?.offsetTop || 0;
+  const inset = Math.max(0, Math.round(layoutHeight - visualHeight - offsetTop));
+  const touchFieldActive = document.body.classList.contains("input-focus-active") && isTouchDevice() && isKeyboardManagedField(document.activeElement);
+  const keyboardOpen = state.mode === "student" && (inset > KEYBOARD_OPEN_THRESHOLD || touchFieldActive);
+  document.documentElement.style.setProperty("--keyboard-inset", `${keyboardOpen ? inset : 0}px`);
+  document.body.classList.toggle("keyboard-open", keyboardOpen);
+}
+
+function ensureActiveInputVisible(field = document.activeElement) {
+  if (!field?.closest?.("#studentScreen")) return;
+  const viewport = window.visualViewport;
+  const visibleTop = viewport?.offsetTop || 0;
+  const visibleBottom = viewport ? viewport.offsetTop + viewport.height : window.innerHeight || document.documentElement.clientHeight || 0;
+  const rect = field.getBoundingClientRect();
+  const margin = 20;
+  if (rect.top < visibleTop + margin || rect.bottom > visibleBottom - margin) {
+    field.scrollIntoView({ block: "center", inline: "nearest" });
+  }
 }
 
 function renderAnswerInputs(problem) {
@@ -8959,6 +9030,8 @@ function focusFirstInput() {
   if (!isTabletLearningViewport()) {
     field.scrollIntoView({ block: "nearest", inline: "nearest" });
   }
+  window.setTimeout(() => ensureActiveInputVisible(field), 80);
+  window.setTimeout(() => ensureActiveInputVisible(field), 320);
 }
 
 function isTabletLearningViewport() {
@@ -8967,6 +9040,7 @@ function isTabletLearningViewport() {
 
 window.addEventListener("resize", () => {
   updateDeviceClass();
+  updateKeyboardViewportState();
   if (state.current) drawVisual(state.current);
 });
 

@@ -13,6 +13,7 @@
   --teal: #287783;
   --lavender: #7861b8;
   --shadow: 0 18px 45px rgba(24, 33, 47, 0.1);
+  --keyboard-inset: 0px;
 }
 
 * {
@@ -2253,4 +2254,230 @@ body.touch-device.student-mode .problem-card.stage-answering .problem-text {
     line-height: 22px;
     background-size: 100% 22px;
   }
+}
+
+body.student-mode.keyboard-open {
+  overflow: hidden;
+}
+
+body.student-mode.keyboard-open .app-shell {
+  height: calc(100vh - var(--keyboard-inset));
+  min-height: 0;
+  padding: 6px;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 1fr;
+}
+
+body.student-mode.keyboard-open .topbar {
+  display: none;
+}
+
+body.student-mode.keyboard-open main,
+body.student-mode.keyboard-open .student-screen {
+  min-height: 0;
+  height: 100%;
+}
+
+body.student-mode.keyboard-open .student-screen {
+  padding: 8px;
+  overflow: hidden;
+}
+
+body.student-mode.keyboard-open .session-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(118px, 0.34fr);
+  gap: 8px;
+  padding-bottom: 6px;
+}
+
+body.student-mode.keyboard-open .session-bar h2 {
+  overflow: hidden;
+  margin-bottom: 0;
+  font-size: 1rem;
+  line-height: 1.22;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.student-mode.keyboard-open .unit-kicker {
+  margin-bottom: 0;
+  font-size: 0.68rem;
+  line-height: 1.2;
+}
+
+body.student-mode.keyboard-open .progress-cluster {
+  width: 100%;
+  font-size: 0.74rem;
+}
+
+body.student-mode.keyboard-open .problem-layout {
+  height: calc(100% - 43px);
+  min-height: 0;
+  grid-template-columns: 1fr !important;
+  gap: 0;
+  overflow: hidden;
+}
+
+body.student-mode.keyboard-open .work-panel {
+  display: none !important;
+}
+
+body.student-mode.keyboard-open .problem-card {
+  display: flex !important;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px;
+  row-gap: 6px;
+}
+
+body.student-mode.keyboard-open .problem-meta {
+  display: none;
+}
+
+body.student-mode.keyboard-open .problem-text {
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: 30vh;
+  overflow: auto;
+  margin-bottom: 4px;
+  font-size: clamp(0.95rem, 2.6vw, 1.12rem);
+  line-height: 1.46;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.student-mode.keyboard-open .mission-tag {
+  min-height: 22px;
+  margin-bottom: 4px;
+  padding: 2px 7px;
+  font-size: 0.68em;
+}
+
+body.student-mode.keyboard-open .inline-memo-box {
+  display: grid !important;
+  flex: 0 0 auto;
+  min-height: 0;
+  max-height: 22vh;
+  margin: 0 0 4px;
+  padding: 6px;
+}
+
+body.student-mode.keyboard-open .memo-head {
+  margin-bottom: 4px;
+}
+
+body.student-mode.keyboard-open .memo-head h3 {
+  font-size: 0.72rem;
+}
+
+body.student-mode.keyboard-open .inline-memo-box textarea {
+  min-height: 54px;
+  max-height: 14vh;
+  font-size: 0.78rem;
+  line-height: 22px;
+  background-size: 100% 22px;
+}
+
+body.student-mode.keyboard-open.answer-focus-active .inline-memo-box {
+  max-height: 16vh;
+}
+
+body.student-mode.keyboard-open.memo-focus-active .inline-memo-box {
+  flex: 1 1 auto;
+  max-height: none;
+}
+
+body.student-mode.keyboard-open.memo-focus-active .inline-memo-box textarea {
+  min-height: 96px;
+  max-height: none;
+  height: 100%;
+}
+
+body.student-mode.keyboard-open .answer-area {
+  flex: 0 0 auto;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+body.student-mode.keyboard-open .answer-field,
+body.student-mode.keyboard-open .vector-fields {
+  gap: 5px;
+}
+
+body.student-mode.keyboard-open .answer-field label,
+body.student-mode.keyboard-open .vector-fields legend,
+body.student-mode.keyboard-open .fraction-answer-panel > span {
+  font-size: 0.78rem;
+}
+
+body.student-mode.keyboard-open .answer-field input,
+body.student-mode.keyboard-open .vector-fields input {
+  min-height: 40px;
+  padding: 7px 10px;
+  font-size: 1rem;
+  scroll-margin: 96px 0 84px;
+}
+
+body.student-mode.keyboard-open .fraction-answer-panel {
+  gap: 5px;
+  padding: 7px;
+}
+
+body.student-mode.keyboard-open .fraction-input-stack {
+  grid-template-rows: 34px 3px 34px;
+}
+
+body.student-mode.keyboard-open .fraction-input-stack input {
+  height: 34px;
+}
+
+body.student-mode.keyboard-open .math-input-tools {
+  gap: 5px;
+}
+
+body.student-mode.keyboard-open .math-key {
+  min-width: 36px;
+  min-height: 34px;
+  padding: 0 8px;
+  font-size: 0.9rem;
+}
+
+body.student-mode.keyboard-open .action-row {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 6px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0), #fff 22%);
+}
+
+body.student-mode.keyboard-open .primary,
+body.student-mode.keyboard-open .secondary {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 38px;
+  padding: 0 8px;
+  font-size: 0.88rem;
+}
+
+body.student-mode.keyboard-open .feedback {
+  flex: 0 0 auto;
+  min-height: 40px;
+  max-height: 58px;
+  overflow: auto;
+  margin-top: 4px;
+  padding: 7px 9px;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+body.student-mode.keyboard-open .review-strip {
+  display: none;
 }
